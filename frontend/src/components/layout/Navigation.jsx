@@ -32,7 +32,7 @@ import {
   ChevronRightIcon,
 } from '@chakra-ui/icons';
 import { FaUser, FaSignOutAlt, FaCog } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Navigation = () => {
   const { isOpen, onToggle } = useDisclosure();

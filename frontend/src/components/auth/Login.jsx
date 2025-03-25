@@ -20,7 +20,7 @@ import {
   Image
 } from '@chakra-ui/react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
