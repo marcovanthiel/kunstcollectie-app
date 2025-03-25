@@ -1,0 +1,28 @@
+# Cloudflare Pages configuratie
+name = "kunstcollectie-app"
+compatibility_date = "2023-01-01"
+
+# Bouw commando's
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Omgevingsvariabelen
+[build.environment]
+  NODE_VERSION = "18"
+
+# Routes configuratie
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Headers voor beveiliging
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://via.placeholder.com; connect-src 'self' https://api.projectkunst.nl;"

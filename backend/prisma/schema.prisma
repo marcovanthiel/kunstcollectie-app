@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Gebruiker {
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  wachtwoord     String
+  naam           String
+  rol            String   // admin, readonly
+  laatst_ingelogd DateTime?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+}
+
+model Kunstenaar {
+  id              Int      @id @default(autoincrement())
+  naam            String
+  adres           String?
+  postcode        String?
+  plaats          String?
+  land            String?
+  telefoon        String?
+  email           String?
+  website         String?
+  portretfoto_url String?
+  geboortedatum   DateTime?
+  overlijdensdatum DateTime?
+  biografie       String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  kunstwerken     Kunstwerk[]
+}
+
+model LocatieType {
+  id           Int      @id @default(autoincrement())
+  naam         String
+  beschrijving String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  locaties     Locatie[]
+}
+
+model Locatie {
+  id           Int      @id @default(autoincrement())
+  naam         String
+  adres        String
+  postcode     String
+  plaats       String
+  land         String
+  type_id      Int
+  locatieType  LocatieType @relation(fields: [type_id], references: [id])
+  latitude     Float?
+  longitude    Float?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  kunstwerken  Kunstwerk[]
+}
+
+model KunstwerkType {
+  id           Int      @id @default(autoincrement())
+  naam         String
+  beschrijving String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  kunstwerken  Kunstwerk[]
+}
+
+model Leverancier {
+  id           Int      @id @default(autoincrement())
+  naam         String
+  adres        String?
+  postcode     String?
+  plaats       String?
+  land         String?
+  telefoon     String?
+  email        String?
+  website      String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  kunstwerken  Kunstwerk[]
+}
+
+model Kunstwerk {
+  id                  Int      @id @default(autoincrement())
+  titel               String
+  kunstenaar_id       Int
+  kunstenaar          Kunstenaar @relation(fields: [kunstenaar_id], references: [id])
+  type_id             Int
+  kunstwerkType       KunstwerkType @relation(fields: [type_id], references: [id])
+  hoogte              Float?
+  breedte             Float?
+  diepte              Float?
+  gewicht             Float?
+  productiedatum      DateTime?
+  is_schatting_datum  Boolean  @default(false)
+  is_editie           Boolean  @default(false)
+  editie_beschrijving String?
+  is_gesigneerd       Boolean  @default(false)
+  handtekening_locatie String?
+  beschrijving        String?
+  locatie_id          Int
+  locatie             Locatie  @relation(fields: [locatie_id], references: [id])
+  aankoopdatum        DateTime?
+  aankoopprijs        Float?
+  leverancier_id      Int?
+  leverancier         Leverancier? @relation(fields: [leverancier_id], references: [id])
+  huidige_marktprijs  Float?
+  verzekerde_waarde   Float?
+  status              String   // in bezit, verkocht, uitgeleend
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+  afbeeldingen        KunstwerkAfbeelding[]
+  bijlagen            KunstwerkBijlage[]
+}
+
+model KunstwerkAfbeelding {
+  id                Int      @id @default(autoincrement())
+  kunstwerk_id      Int
+  kunstwerk         Kunstwerk @relation(fields: [kunstwerk_id], references: [id])
+  bestandsnaam      String
+  bestandspad       String
+  is_hoofdafbeelding Boolean  @default(false)
+  volgorde          Int      @default(0)
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+}
+
+model KunstwerkBijlage {
+  id           Int      @id @default(autoincrement())
+  kunstwerk_id Int
+  kunstwerk    Kunstwerk @relation(fields: [kunstwerk_id], references: [id])
+  bestandsnaam String
+  bestandspad  String
+  bestandstype String   // PDF, DOCX
+  beschrijving String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
