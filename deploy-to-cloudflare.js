@@ -6,13 +6,18 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Configuratie
+// Configuratie met relatieve paden
 const config = {
   projectName: 'kunstcollectie-app',
-  frontendDir: path.resolve(__dirname, '../frontend'),
-  backendDir: path.resolve(__dirname, '../backend'),
+  frontendDir: path.join(__dirname, 'frontend'),
+  backendDir: path.join(__dirname, 'backend'),
   apiDomain: 'api.projectkunst.nl'
 };
+
+console.log('Configuratie:');
+console.log(`- Project directory: ${__dirname}`);
+console.log(`- Frontend directory: ${config.frontendDir}`);
+console.log(`- Backend directory: ${config.backendDir}`);
 
 async function deployToCloudflare() {
   try {
@@ -89,6 +94,14 @@ function setupCloudflareD1() {
 // Functie om wrangler.toml bij te werken met database ID
 function updateWranglerConfig(databaseId) {
   const wranglerPath = path.join(config.frontendDir, 'wrangler.toml');
+  
+  console.log(`Bijwerken van wrangler.toml op pad: ${wranglerPath}`);
+  
+  // Controleer of het bestand bestaat
+  if (!fs.existsSync(wranglerPath)) {
+    throw new Error(`wrangler.toml bestand niet gevonden op pad: ${wranglerPath}`);
+  }
+  
   let wranglerConfig = fs.readFileSync(wranglerPath, 'utf8');
   
   // Update database_id in wrangler.toml
@@ -101,6 +114,7 @@ function updateWranglerConfig(databaseId) {
 // Functie om backend API te deployen
 function deployBackend() {
   try {
+    console.log(`Navigeren naar backend directory: ${config.backendDir}`);
     process.chdir(config.backendDir);
     
     // Installeer dependencies
@@ -125,6 +139,7 @@ function deployBackend() {
 // Functie om frontend applicatie te deployen
 function deployFrontend() {
   try {
+    console.log(`Navigeren naar frontend directory: ${config.frontendDir}`);
     process.chdir(config.frontendDir);
     
     // Installeer dependencies
@@ -149,6 +164,7 @@ function deployFrontend() {
 // Functie om database te initialiseren
 function initializeDatabase() {
   try {
+    console.log(`Navigeren naar backend directory: ${config.backendDir}`);
     process.chdir(config.backendDir);
     
     // Voer het database installatie script uit
