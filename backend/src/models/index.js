@@ -93,7 +93,7 @@ async function seedDatabase() {
     
     // Maak admin gebruiker aan als deze nog niet bestaat
     const adminExists = await prisma.gebruiker.findUnique({
-      where: { email: 'admin@kunstcollectie.nl' }
+      where: { email: 'marco@marcovanthiel.nl' }
     });
     
     if (!adminExists) {
@@ -102,7 +102,7 @@ async function seedDatabase() {
       
       await prisma.gebruiker.create({
         data: {
-          email: 'admin@kunstcollectie.nl',
+          email: 'marco@marcovanthiel.nl',
           wachtwoord: hashedPassword,
           naam: 'Admin Gebruiker',
           rol: 'admin'
