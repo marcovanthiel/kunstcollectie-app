@@ -19,6 +19,19 @@ console.log(`- Project directory: ${__dirname}`);
 console.log(`- Frontend directory: ${config.frontendDir}`);
 console.log(`- Backend directory: ${config.backendDir}`);
 
+// Controleer of de directories bestaan
+if (!fs.existsSync(config.frontendDir)) {
+  console.error(`Frontend directory bestaat niet: ${config.frontendDir}`);
+  console.error('Zorg ervoor dat je het script uitvoert vanuit de hoofdmap van de repository.');
+  process.exit(1);
+}
+
+if (!fs.existsSync(config.backendDir)) {
+  console.error(`Backend directory bestaat niet: ${config.backendDir}`);
+  console.error('Zorg ervoor dat je het script uitvoert vanuit de hoofdmap van de repository.');
+  process.exit(1);
+}
+
 async function deployToCloudflare() {
   try {
     console.log('Start Cloudflare deployment proces...');
@@ -117,6 +130,22 @@ function deployBackend() {
     console.log(`Navigeren naar backend directory: ${config.backendDir}`);
     process.chdir(config.backendDir);
     
+    // Controleer of wrangler.toml bestaat in de backend directory
+    const backendWranglerPath = path.join(config.backendDir, 'wrangler.toml');
+    if (!fs.existsSync(backendWranglerPath)) {
+      console.log('wrangler.toml niet gevonden in backend directory, aanmaken...');
+      const wranglerContent = `name = "kunstcollectie-app-api"
+compatibility_date = "2023-01-01"
+main = "src/index.js"
+
+[vars]
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/kunstcollectie"
+JWT_SECRET = "kunstcollectie_secret_key"
+JWT_EXPIRES_IN = "24h"`;
+      fs.writeFileSync(backendWranglerPath, wranglerContent);
+      console.log('wrangler.toml aangemaakt voor backend');
+    }
+    
     // Installeer dependencies
     console.log('Installeren van backend dependencies...');
     execSync('npm install', { stdio: 'inherit' });
@@ -127,7 +156,7 @@ function deployBackend() {
     
     // Deploy als Cloudflare Worker
     console.log('Deployen van backend als Cloudflare Worker...');
-    execSync(`npx wrangler deploy --name ${config.projectName}-api`, { stdio: 'inherit' });
+    execSync('npx wrangler deploy', { stdio: 'inherit' });
     
     console.log('Backend API succesvol gedeployed');
   } catch (error) {

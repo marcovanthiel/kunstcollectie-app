@@ -1,0 +1,8 @@
+name = "kunstcollectie-app-api"
+compatibility_date = "2023-01-01"
+main = "src/index.js"
+
+[vars]
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/kunstcollectie"
+JWT_SECRET = "kunstcollectie_secret_key"
+JWT_EXPIRES_IN = "24h"
